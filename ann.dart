@@ -5,7 +5,7 @@ import "dart:math";
 void main()
 {
     List<List<double>> input = [[0,0,0],[0,0,1],[0,1,0],[1,0,0],[1,1,0],[1,0,1],[0,1,1],[1,1,1]];
-    List<int> networkShape = [3, 5, 1];
+    List<int> networkShape = [3, 10, 10, 10, 1];
     List<List<List<double>>> layer1ShapeExample = [ 
                                           [ 
                                               [1,1,1], [1,1,1], [1,1,1], [1,1,1], [1,1,1] 
@@ -36,14 +36,12 @@ void main()
 
 
     List<List<List<List<double>>>> networkArray = generateLayers(networkShape);
-    print(layer1);
-    print("\n ${layer2}");
-    
     print("\n\n\n ${networkArray}");
 
-    print("\n\n\nForward pass:");
-    print(forwardPass(forwardPass(input[0], layer1), layer2));
-    print("\n\n\nForward pass 2:");
+    //print("\n\n\nForward pass:");
+    //print(forwardPass(forwardPass(input[0], layer1), layer2));
+    print("\n\n\nForward pass 2");
+    print("FP2 output: ");
     print(forwardPass2(input[0], networkArray));
 }
 
@@ -90,12 +88,14 @@ List<double> forwardPass2(inputData, layersArray)
 {
     List<double> layerInput = inputData;
     List<double> outputData = [];
-    for(int x=0; x<(layersArray.length)-1; x++)
+    print(layersArray.length);
+    for(int x=0; x<(layersArray.length)-0; x++)
     {
+        print("Layer ${x+1} input: ${layerInput}");
         List<List<List<double>>> layerArray = layersArray[x];
 
         List<double> layerOutput = [];
-        for(int i=0; i<(layerArray[0].length)-1; i++)
+        for(int i=0; i<(layerArray[0].length)-0; i++)
         {
 
             //start function
@@ -112,6 +112,7 @@ List<double> forwardPass2(inputData, layersArray)
         }
         
         layerInput = layerOutput;
+        print("layerOutput ${layerOutput}");
         outputData = layerOutput;
     }
     return outputData;
