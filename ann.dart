@@ -20,11 +20,8 @@ void main()
     List<List<List<List<double>>>> networkArray = generateLayers(networkShape);
     print("\n\n\n ${networkArray}");
 
-    //print("\n\n\nForward pass:");
-    //print(forwardPass(forwardPass(input[0], layer1), layer2));
-    print("\n\n\nForward pass 2");
-    print("FP2 output: ");
-    print(forwardPass2(input[0], networkArray));
+    print("\n\n\nForward pass");
+    print(forwardPass(input[0], networkArray));
 }
 
 
