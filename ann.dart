@@ -45,18 +45,18 @@ List<double> forwardPass(inputData, layersArray)
     List<double> layerInput = inputData;
     List<double> outputData = [];
     print(layersArray.length);
-    for(int x=0; x<(layersArray.length)-0; x++)
+    for(int x=0; x<(layersArray.length); x++)
     {
         print("Layer ${x+1} input: ${layerInput}");
         List<List<List<double>>> layerArray = layersArray[x];
 
         List<double> layerOutput = [];
-        for(int i=0; i<(layerArray[0].length)-0; i++)
+        for(int i=0; i<(layerArray[0].length); i++)
         {
 
             //start function
             double neuronValue = 0.0;
-            for(int j=0; j<(layerArray[0][0].length)-1; j++)
+            for(int j=0; j<(layerArray[0][0].length); j++)
             {
                 neuronValue += (layerInput[j].toDouble()) * (layerArray[0][i][j].toDouble());
 
