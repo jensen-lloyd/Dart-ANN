@@ -3,27 +3,39 @@ import "dart:math";
 
 
     List<List<double>> input = [[0,0,0],[0,0,1],[0,1,0],[1,0,0],[1,1,0],[1,0,1],[0,1,1],[1,1,1]];
-    List<int> networkShape = [3, 5, 1];
+    List<int> networkShape = [5760, 3852, 3852, 3852, 12];
     List<List<List<double>>> layer1ShapeExample = [ 
-                                          [ 
-                                              [1,1,1], [1,1,1], [1,1,1], [1,1,1], [1,1,1] 
-                                          ],
+                                                      [ 
+                                                          [1,1,1], [1,1,1], [1,1,1], [1,1,1], [1,1,1] 
+                                                      ],
 
-                                          [
-                                              [0], [0], [0], [0], [1]
-                                          ]
-                                      ];
+                                                      [
+                                                          [0], [0], [0], [0], [1]
+                                                      ]
+                                                  ];
     int batchSize = 8;
     int epochs = 10;
 
 
+    List<List<double>> inputGen = List.generate(10, (i) => List.generate(5760, (j) => Random().nextDouble(), growable: false));
+
+
+
 void main()
 {
-    List<List<List<List<double>>>> networkArray = generateLayers(networkShape);
-    print("\n\n\n ${networkArray}");
+    final stopwatch = new Stopwatch()..start();
 
+
+    List<List<List<List<double>>>> networkArray = generateLayers(networkShape);
+    //print("\n\n\n ${networkArray}");
+    print("Completed in ${stopwatch.elapsed}");
+
+    
     print("\n\n\nForward pass");
-    print(forwardPass(input[0], networkArray, ["ReLU", "ReLU"]));
+    stopwatch.reset();
+    forwardPass(inputGen[0], networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
+    print("Completed in ${stopwatch.elapsed}");
+
 }
 
 
@@ -46,11 +58,9 @@ List<double> forwardPass(inputData, layersArray, List<String> activationFunction
 {
     List<double> layerInput = inputData;
     List<double> outputData = [];
-    print(layersArray.length);
     for(int x=0; x<(layersArray.length); x++)
     {
         String activationFunction = activationFunctions[x];
-        print("Layer ${x+1} input: ${layerInput}");
         List<List<List<double>>> layerArray = layersArray[x];
 
         List<double> layerOutput = [];
@@ -70,7 +80,6 @@ List<double> forwardPass(inputData, layersArray, List<String> activationFunction
             layerOutput.add(neuronValue);
         }
         
-        print(activationFunction);
         layerInput = activation(layerOutput, activationFunction);
         outputData = activation(layerOutput, activationFunction);
     }
