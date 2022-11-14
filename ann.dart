@@ -1,23 +1,24 @@
 import "dart:core";
 import "dart:math";
 
+double E = 2.7182818284;
 
-    List<List<double>> input = [[0,0,0],[0,0,1],[0,1,0],[1,0,0],[1,1,0],[1,0,1],[0,1,1],[1,1,1]];
-    List<int> networkShape = [5760, 3852, 3852, 3852, 12];
-    List<List<List<double>>> layer1ShapeExample = [ 
-                                                      [ 
-                                                          [1,1,1], [1,1,1], [1,1,1], [1,1,1], [1,1,1] 
-                                                      ],
+List<List<double>> input = [[0,0,0],[0,0,1],[0,1,0],[1,0,0],[1,1,0],[1,0,1],[0,1,1],[1,1,1]];
+List<int> networkShape = [3, 5, 1];
+List<List<List<double>>> layer1ShapeExample = [ 
+                                                  [ 
+                                                      [1,1,1], [1,1,1], [1,1,1], [1,1,1], [1,1,1] 
+                                                  ],
 
-                                                      [
-                                                          [0], [0], [0], [0], [1]
-                                                      ]
-                                                  ];
-    int batchSize = 8;
-    int epochs = 10;
+                                                  [
+                                                      [0], [0], [0], [0], [1]
+                                                  ]
+                                              ];
+int batchSize = 8;
+int epochs = 10;
 
-
-    List<List<double>> inputGen = List.generate(10, (i) => List.generate(5760, (j) => Random().nextDouble(), growable: false));
+//List<int> networkShape2 = [5760, 3852, 3852, 3852, 12];
+//List<List<double>> input2 = List.generate(10, (i) => List.generate(5760, (j) => Random().nextDouble(), growable: false));
 
 
 
@@ -33,8 +34,12 @@ void main()
     
     print("\n\n\nForward pass");
     stopwatch.reset();
-    forwardPass(inputGen[0], networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
+    //forwardPass(input2[0], networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
+    print(forwardPass(input[0], networkArray, ["ReLU", "ReLU"]));
     print("Completed in ${stopwatch.elapsed}");
+
+
+    print(activation([0.1, 14, 6, 2.3, 0.99], "Softmax"));
 
 }
 
@@ -46,7 +51,7 @@ List<List<List<List<double>>>> generateLayers(shape)
 
     for(int x=0; x<(shape.length)-1; x++)
     {
-        networkArray.add([(List.generate(shape[x+1], (i) => List.generate(shape[x], (j) => Random().nextDouble(), growable: false))), (List.generate(shape[x+1], (i) => List.generate(1, (j) => (Random().nextInt(2000000)-1000000)/1000000, growable:false)))]);
+        networkArray.add([(List.generate(shape[x+1], (i) => List.generate(shape[x], (j) => Random().nextDouble(), growable: false))), (List.generate(shape[x+1], (i) => List.generate(1, (j) => (Random().nextInt(2000000000)-1000000000)/1000000000, growable:false)))]);
     }
 
     return networkArray;
@@ -91,52 +96,79 @@ List<double> activation(layerOutput, activationFunction)
 {
     List<double> output = [];
 
-    for(int i=0; i<(layerOutput.length); i++)
+
+    if(activationFunction == "Softmax")
     {
-        double y = 0;
-        double x = layerOutput[i];
-
-        if(activationFunction == "ReLU")
+        List<double> expValues = [];
+        for(int i=0; i<(layerOutput.length); i++)
         {
-            if(x<0)
-            {
-                y=0;
-            }
-
-
-            if(x>=0)
-            {
-                y=x;
-            }
+            expValues.add(pow(E, layerOutput[i]).toDouble());
         }
 
-
-        if(activationFunction == "LReLU")
+        double normBase = 0;
+        for(int i=0; i<(expValues.length)-1; i++)
         {
-            if(x<0)
-            {
-                y=(x*0.2);
-            }
-
-            if(x>=0)
-            {
-                y=x;
-            }
+            normBase += expValues[i];
         }
 
-        if(activationFunction == "Linear")
+        for(int i=0; i<(expValues.length); i++)
         {
-            y=x;
+            output.add(expValues[i]/normBase);
         }
-
-        if(activationFunction == "Sigmoid")
-        {
-            y=x;
-        }
-        
-        output.add(y);
+    
+        return output;
     }
 
-    return output;
+    else
+    {
+    
+        for(int i=0; i<(layerOutput.length); i++)
+        {
+            double y = 0;
+            double x = (layerOutput[i]).toDouble();
+
+            if(activationFunction == "ReLU")
+            {
+                if(x<0)
+                {
+                    y=0;
+                }
+
+
+                if(x>=0)
+                {
+                    y=x;
+                }
+            }
+
+
+            if(activationFunction == "LReLU")
+            {
+                if(x<0)
+                {
+                    y=(x*0.2);
+                }
+
+                if(x>=0)
+                {
+                    y=x;
+                }
+            }
+
+            if(activationFunction == "Linear")
+            {
+                y=x;
+            }
+
+            if(activationFunction == "Sigmoid")
+            {
+                y=x;
+            }
+            
+            output.add(y);
+        }
+
+        return output;
+    }
 
 }
