@@ -3,8 +3,10 @@ import "dart:math";
 
 double E = 2.7182818284;
 
-List<List<double>> input = [[0,0,0],[0,0,1],[0,1,0],[1,0,0],[1,1,0],[1,0,1],[0,1,1],[1,1,1]];
-List<int> networkShape = [3, 5, 1];
+List<List<List<double>>> input = [[[0,0,0],[0,0,1],[0,1,0],[1,0,0],[1,1,0],[1,0,1],[0,1,1],[1,1,1]], 
+                                    [[0, 1], [0,1], [1,0], [0,1], [1,0], [0,1], [1,0], [1,0]]];
+
+List<int> networkShape = [3, 5, 2];
 List<List<List<double>>> layer1ShapeExample = [ 
                                                   [ 
                                                       [1,1,1], [1,1,1], [1,1,1], [1,1,1], [1,1,1] 
@@ -35,10 +37,11 @@ void main()
     print("\n\n\nForward pass");
     stopwatch.reset();
     //forwardPass(input2[0], networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
-    print(forwardPass(input[6], networkArray, ["Sigmoid", "Softmax"]));
+    print(forwardPass(input[0][2], networkArray, ["ReLU", "Softmax"]));
     print("Completed in ${stopwatch.elapsed}");
+    
 
-    print(activation([0.1, 0.9, 14, 6, 2], "Softmax"));
+    print(loss(forwardPass(input[0][2], networkArray, ["ReLU", "Softmax"]), input[0][2]));
 }
 
 
@@ -57,7 +60,7 @@ List<List<List<List<double>>>> generateLayers(shape)
 
 
 
-List<double> forwardPass(inputData, layersArray, List<String> activationFunctions)
+List<double> forwardPass(inputData, layersArray, List<String> activationFunctions, [bool debug = false])
 {
     List<double> layerInput = inputData;
     List<double> outputData = [];
@@ -85,6 +88,12 @@ List<double> forwardPass(inputData, layersArray, List<String> activationFunction
         
         layerInput = activation(layerOutput, activationFunction);
         outputData = activation(layerOutput, activationFunction);
+        
+        if(debug == true)
+        {
+            print("Layer output: ${layerInput}");
+        }
+
     }
     return outputData;
 }
@@ -176,3 +185,24 @@ List<double> activation(layerOutput, activationFunction)
     }
 
 }
+
+
+
+List<double> loss(List<double> output, List<double> desired, [String function = "MSE"])
+{
+    List<double> loss = [];
+
+    if(function == "MSE")
+    {
+        for(int i=0; i<(output.length); i++)
+        {
+            loss.add(pow((output[i]-desired[i]), 2).toDouble());
+        }
+    }
+
+    return loss;
+
+}
+
+
+
