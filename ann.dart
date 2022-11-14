@@ -34,7 +34,7 @@ List<List<List<List<double>>>> generateLayers(shape)
 
     for(int x=0; x<(shape.length)-1; x++)
     {
-        networkArray.add([(List.generate(shape[x+1], (i) => List.generate(shape[x], (j) => Random().nextDouble(), growable: false))), (List.generate(shape[x+1], (i) => List.generate(1, (j) => Random().nextDouble(), growable:false)))]);
+        networkArray.add([(List.generate(shape[x+1], (i) => List.generate(shape[x], (j) => Random().nextDouble(), growable: false))), (List.generate(shape[x+1], (i) => List.generate(1, (j) => (Random().nextInt(2000000)-1000000)/1000000, growable:false)))]);
     }
 
     return networkArray;
