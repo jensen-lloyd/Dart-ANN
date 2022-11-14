@@ -2,8 +2,6 @@ import "dart:core";
 import "dart:math";
 
 
-void main()
-{
     List<List<double>> input = [[0,0,0],[0,0,1],[0,1,0],[1,0,0],[1,1,0],[1,0,1],[0,1,1],[1,1,1]];
     List<int> networkShape = [3, 5, 1];
     List<List<List<double>>> layer1ShapeExample = [ 
@@ -15,13 +13,18 @@ void main()
                                               [0], [0], [0], [0], [1]
                                           ]
                                       ];
+    int batchSize = 8;
+    int epochs = 10;
 
 
+void main()
+{
     List<List<List<List<double>>>> networkArray = generateLayers(networkShape);
     print("\n\n\n ${networkArray}");
 
     print("\n\n\nForward pass");
-    print(forwardPass(input[0], networkArray));
+    print(forwardPass(input[0], networkArray, "Linear"));
+    print(forwardPass(input[0], networkArray, "ReLU"));
 }
 
 
@@ -40,7 +43,7 @@ List<List<List<List<double>>>> generateLayers(shape)
 
 
 
-List<double> forwardPass(inputData, layersArray)
+List<double> forwardPass(inputData, layersArray, activationFunction)
 {
     List<double> layerInput = inputData;
     List<double> outputData = [];
@@ -67,12 +70,64 @@ List<double> forwardPass(inputData, layersArray)
             layerOutput.add(neuronValue);
         }
         
-        layerInput = layerOutput;
-        print("layerOutput ${layerOutput}");
-        outputData = layerOutput;
+        layerInput = activation(layerOutput, activationFunction);
+        outputData = activation(layerOutput, activationFunction);
     }
+    print(activationFunction);
     return outputData;
 }
 
 
+List<double> activation(layerOutput, activationFunction)
+{
+    List<double> output = [];
 
+    for(int i=0; i<(layerOutput.length); i++)
+    {
+        double y = 0;
+        double x = layerOutput[i];
+
+        if(activationFunction == "ReLU")
+        {
+            if(x<0)
+            {
+                y=0;
+            }
+
+
+            if(x>=0)
+            {
+                y=x;
+            }
+        }
+
+
+        if(activationFunction == "LReLU")
+        {
+            if(x<0)
+            {
+                y=(x*0.2);
+            }
+
+            if(x>=0)
+            {
+                y=x;
+            }
+        }
+
+        if(activationFunction == "Linear")
+        {
+            y=x;
+        }
+
+        if(activationFunction == "Sigmoid")
+        {
+            y=x;
+        }
+        
+        output.add(y);
+    }
+
+    return output;
+
+}
