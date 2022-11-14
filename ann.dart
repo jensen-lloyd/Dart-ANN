@@ -35,12 +35,10 @@ void main()
     print("\n\n\nForward pass");
     stopwatch.reset();
     //forwardPass(input2[0], networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
-    print(forwardPass(input[0], networkArray, ["ReLU", "ReLU"]));
+    print(forwardPass(input[6], networkArray, ["Sigmoid", "Softmax"]));
     print("Completed in ${stopwatch.elapsed}");
 
-
-    print(activation([0.1, 14, 6, 2.3, 0.99], "Softmax"));
-
+    print(activation([0.1, 0.9, 14, 6, 2], "Softmax"));
 }
 
 
@@ -99,10 +97,21 @@ List<double> activation(layerOutput, activationFunction)
 
     if(activationFunction == "Softmax")
     {
+        double smallest = 1000000000000000;
+        for(int i=0; i<(layerOutput.length); i++)
+        {
+            if(layerOutput[i] < smallest)
+            {
+                smallest = layerOutput[i];
+            }
+
+        }
+
+
         List<double> expValues = [];
         for(int i=0; i<(layerOutput.length); i++)
         {
-            expValues.add(pow(E, layerOutput[i]).toDouble());
+            expValues.add((pow(E, layerOutput[i]).toDouble())-smallest);
         }
 
         double normBase = 0;
@@ -160,11 +169,6 @@ List<double> activation(layerOutput, activationFunction)
                 y=x;
             }
 
-            if(activationFunction == "Sigmoid")
-            {
-                y=x;
-            }
-            
             output.add(y);
         }
 
