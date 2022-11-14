@@ -23,8 +23,7 @@ void main()
     print("\n\n\n ${networkArray}");
 
     print("\n\n\nForward pass");
-    print(forwardPass(input[0], networkArray, "Linear"));
-    print(forwardPass(input[0], networkArray, "ReLU"));
+    print(forwardPass(input[0], networkArray, ["ReLU", "ReLU"]));
 }
 
 
@@ -43,13 +42,14 @@ List<List<List<List<double>>>> generateLayers(shape)
 
 
 
-List<double> forwardPass(inputData, layersArray, activationFunction)
+List<double> forwardPass(inputData, layersArray, List<String> activationFunctions)
 {
     List<double> layerInput = inputData;
     List<double> outputData = [];
     print(layersArray.length);
     for(int x=0; x<(layersArray.length); x++)
     {
+        String activationFunction = activationFunctions[x];
         print("Layer ${x+1} input: ${layerInput}");
         List<List<List<double>>> layerArray = layersArray[x];
 
@@ -70,10 +70,10 @@ List<double> forwardPass(inputData, layersArray, activationFunction)
             layerOutput.add(neuronValue);
         }
         
+        print(activationFunction);
         layerInput = activation(layerOutput, activationFunction);
         outputData = activation(layerOutput, activationFunction);
     }
-    print(activationFunction);
     return outputData;
 }
 
