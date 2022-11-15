@@ -1,1 +1,3 @@
 - create Sigmoid and Softmax activation function
+
+- tidy up function parameter names (e.g. networkArray vs layersArray)

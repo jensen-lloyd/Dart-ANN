@@ -3,10 +3,9 @@ import "dart:math";
 
 double E = 2.7182818284;
 
-List<List<List<double>>> input = [[[0,0,0],[0,0,1],[0,1,0],[1,0,0],[1,1,0],[1,0,1],[0,1,1],[1,1,1]], 
-                                    [[0, 1], [0,1], [1,0], [0,1], [1,0], [0,1], [1,0], [1,0]]];
+//List<List<List<double>>> input = [[[0,0,10],[0,0,1],[0,1,0],[1,0,0],[1,1,0],[1,0,1],[0,1,1],[1,1,1]],[[0, 1], [0,1], [1,0], [0,1], [1,0], [0,1], [1,0], [1,0]]];
 
-List<int> networkShape = [3, 5, 2];
+//List<int> networkShape = [3, 5, 2];
 List<List<List<double>>> layer1ShapeExample = [ 
                                                   [ 
                                                       [1,1,1], [1,1,1], [1,1,1], [1,1,1], [1,1,1] 
@@ -19,8 +18,10 @@ List<List<List<double>>> layer1ShapeExample = [
 int batchSize = 8;
 int epochs = 10;
 
-//List<int> networkShape2 = [5760, 3852, 3852, 3852, 12];
-//List<List<double>> input2 = List.generate(10, (i) => List.generate(5760, (j) => Random().nextDouble(), growable: false));
+List<int> networkShape = [5760, 3852, 3852, 3852, 12];
+List<List<double>> inputGen = List.generate(1, (i) => (List.generate(5760, (j) => (Random().nextDouble() * 10000), growable: true)));
+List<List<List<double>>> input = [inputGen, [[1,0, 1,0, 1,0, 1,0, 1,0, 1,0]]];
+
 
 
 
@@ -30,18 +31,22 @@ void main()
 
 
     List<List<List<List<double>>>> networkArray = generateLayers(networkShape);
-    //print("\n\n\n ${networkArray}");
-    print("Completed in ${stopwatch.elapsed}");
+    print("Paramater initialisation completed in ${stopwatch.elapsed}\n\n");
 
     
-    print("\n\n\nForward pass");
+    print("Forward pass:\n");
     stopwatch.reset();
-    //forwardPass(input2[0], networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
-    (input[0][2]);
-    print(forwardPass(input[0][2], networkArray, ["ReLU", "Sigmoid"]));
-    print("Completed in ${stopwatch.elapsed}");
 
-    print(activation([0.1, 0.9, 14, 6, 2], "Softmax"));
+    for(int i=0; i<(input[0].length); i++)
+    {
+        //print("input: ${input[0][i]}");
+        List<double> output = forwardPass((input[0][i]), networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
+        print("Output: ${output}");
+        List<double> outputLoss = loss(output, input[1][i], "MSE");
+        print("Loss: ${outputLoss}");
+    }
+    print("Network trained 1 epoch in: ${stopwatch.elapsed}");
+
 }
 
 
@@ -60,22 +65,22 @@ List<List<List<List<double>>>> generateLayers(shape)
 
 
 
-List<double> forwardPass(inputData, layersArray, List<String> activationFunctions)
+List<double> forwardPass(List<double> inputData, List<List<List<List<double>>>> layersArray, List<String> activationFunctions)
 {
     List<double> layerInput = inputData;
     List<double> outputData = [];
-    for(int x=0; x<(layersArray.length); x++)
+    for(int x=0; x<(layersArray.length); x++) //iterates thru the layers
     {
         String activationFunction = activationFunctions[x];
         List<List<List<double>>> layerArray = layersArray[x];
 
         List<double> layerOutput = [];
-        for(int i=0; i<(layerArray[0].length); i++)
+        for(int i=0; i<(layerArray[0].length); i++) //iterates thru neurons
         {
 
             //start function
             double neuronValue = 0.0;
-            for(int j=0; j<(layerArray[0][0].length); j++)
+            for(int j=0; j<(layerArray[0][0].length); j++) //iterates thru weights
             {
                 neuronValue += (layerInput[j].toDouble()) * (layerArray[0][i][j].toDouble());
 
@@ -93,47 +98,62 @@ List<double> forwardPass(inputData, layersArray, List<String> activationFunction
 }
 
 
-List<double> activation(layerOutput, activationFunction)
+List<double> softmax(List<double> layerOutput)
 {
     List<double> output = [];
 
+    double smallest = 1000000000000000;
+    for(int i=0; i<(layerOutput.length); i++)
+    {
+        if(layerOutput[i] < smallest)
+        {
+            smallest = layerOutput[i];
+        }
+    }
+
+
+    for(int i=0; i<(layerOutput.length); i++)
+    {
+        layerOutput[i] -= smallest;
+    }
+
+
+    List<double> expValues = [];
+    for(int i=0; i<(layerOutput.length); i++)
+    {
+        expValues.add(pow(E, (layerOutput[i])).toDouble());
+    }
+
+
+    double normBase = 0;
+    for(int i=0; i<(expValues.length); i++)
+    {
+        normBase += expValues[i];
+    }
+
+
+    for(int i=0; i<(expValues.length); i++)
+    {
+        output.add(expValues[i]/normBase);
+    }
+
+
+    return output;
+}
+
+
+List<double> activation(List<double> layerOutput, String activationFunction)
+{
 
     if(activationFunction == "Softmax")
     {
-        double smallest = 1000000000000000;
-        for(int i=0; i<(layerOutput.length); i++)
-        {
-            if(layerOutput[i] < smallest)
-            {
-                smallest = layerOutput[i];
-            }
-
-        }
-
-
-        List<double> expValues = [];
-        for(int i=0; i<(layerOutput.length); i++)
-        {
-            expValues.add((pow(E, layerOutput[i]).toDouble())-smallest);
-        }
-
-        double normBase = 0;
-        for(int i=0; i<(expValues.length)-1; i++)
-        {
-            normBase += expValues[i];
-        }
-
-        for(int i=0; i<(expValues.length); i++)
-        {
-            output.add(expValues[i]/normBase);
-        }
-    
-        return output;
+        return softmax(layerOutput);
     }
 
     else
     {
-    
+        List<double> output = [];
+
         for(int i=0; i<(layerOutput.length); i++)
         {
             double y = 0;
@@ -158,7 +178,7 @@ List<double> activation(layerOutput, activationFunction)
             {
                 if(x<0)
                 {
-                    y=(x*0.2);
+                    y=(x*0.1);
                 }
 
                 if(x>=0)
@@ -182,15 +202,25 @@ List<double> activation(layerOutput, activationFunction)
 
 
 
-List<double> loss(List<double> output, List<double> desired)
+List<double> loss(List<double> output, List<double> desired, [String function = "MSE"])
 {
     List<double> loss = [];
 
-    for(int i=0; i<(output.length); i++)
+    if(function == "MSE")
     {
-        loss.add(pow((output[i]-desired[i]), 2).toDouble());
+        for(int i=0; i<(output.length); i++)
+        {
+            loss.add(pow((output[i]-desired[i]), 2).toDouble());
+        }
     }
+
 
     return loss;
 
+}
+
+
+void backprop(List<double> loss, List<List<List<List<double>>>> networkArray)
+{
+    
 }
