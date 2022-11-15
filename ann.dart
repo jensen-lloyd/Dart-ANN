@@ -37,11 +37,11 @@ void main()
     print("\n\n\nForward pass");
     stopwatch.reset();
     //forwardPass(input2[0], networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
-    print(forwardPass(input[0][2], networkArray, ["ReLU", "Softmax"]));
+    (input[0][2]);
+    print(forwardPass(input[0][2], networkArray, ["ReLU", "Sigmoid"]));
     print("Completed in ${stopwatch.elapsed}");
-    
 
-    print(loss(forwardPass(input[0][2], networkArray, ["ReLU", "Softmax"]), input[0][2]));
+    print(activation([0.1, 0.9, 14, 6, 2], "Softmax"));
 }
 
 
@@ -60,7 +60,7 @@ List<List<List<List<double>>>> generateLayers(shape)
 
 
 
-List<double> forwardPass(inputData, layersArray, List<String> activationFunctions, [bool debug = false])
+List<double> forwardPass(inputData, layersArray, List<String> activationFunctions)
 {
     List<double> layerInput = inputData;
     List<double> outputData = [];
@@ -88,12 +88,6 @@ List<double> forwardPass(inputData, layersArray, List<String> activationFunction
         
         layerInput = activation(layerOutput, activationFunction);
         outputData = activation(layerOutput, activationFunction);
-        
-        if(debug == true)
-        {
-            print("Layer output: ${layerInput}");
-        }
-
     }
     return outputData;
 }
@@ -188,21 +182,15 @@ List<double> activation(layerOutput, activationFunction)
 
 
 
-List<double> loss(List<double> output, List<double> desired, [String function = "MSE"])
+List<double> loss(List<double> output, List<double> desired)
 {
     List<double> loss = [];
 
-    if(function == "MSE")
+    for(int i=0; i<(output.length); i++)
     {
-        for(int i=0; i<(output.length); i++)
-        {
-            loss.add(pow((output[i]-desired[i]), 2).toDouble());
-        }
+        loss.add(pow((output[i]-desired[i]), 2).toDouble());
     }
 
     return loss;
 
 }
-
-
-
