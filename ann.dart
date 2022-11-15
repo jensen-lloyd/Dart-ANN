@@ -3,9 +3,9 @@ import "dart:math";
 
 double E = 2.7182818284;
 
-//List<List<List<double>>> input = [[[0,0,10],[0,0,1],[0,1,0],[1,0,0],[1,1,0],[1,0,1],[0,1,1],[1,1,1]],[[0, 1], [0,1], [1,0], [0,1], [1,0], [0,1], [1,0], [1,0]]];
+List<List<List<double>>> input = [[[0,0,10],[0,0,1],[0,1,0],[1,0,0],[1,1,0],[1,0,1],[0,1,1],[1,1,1]],[[0, 1], [0,1], [1,0], [0,1], [1,0], [0,1], [1,0], [1,0]]];
 
-//List<int> networkShape = [3, 5, 2];
+List<int> networkShape = [3, 5, 2];
 List<List<List<double>>> layer1ShapeExample = [ 
                                                   [ 
                                                       [1,1,1], [1,1,1], [1,1,1], [1,1,1], [1,1,1] 
@@ -18,9 +18,9 @@ List<List<List<double>>> layer1ShapeExample = [
 int batchSize = 8;
 int epochs = 10;
 
-List<int> networkShape = [5760, 3852, 3852, 3852, 12];
+//List<int> networkShape = [5760, 3852, 3852, 3852, 12];
 List<List<double>> inputGen = List.generate(1, (i) => (List.generate(5760, (j) => (Random().nextDouble() * 10000), growable: true)));
-List<List<List<double>>> input = [inputGen, [[1,0, 1,0, 1,0, 1,0, 1,0, 1,0]]];
+//List<List<List<double>>> input = [inputGen, [[1,0, 1,0, 1,0, 1,0, 1,0, 1,0]]];
 
 
 
@@ -28,8 +28,6 @@ List<List<List<double>>> input = [inputGen, [[1,0, 1,0, 1,0, 1,0, 1,0, 1,0]]];
 void main()
 {
     final stopwatch = new Stopwatch()..start();
-
-
     List<List<List<List<double>>>> networkArray = generateLayers(networkShape);
     print("Paramater initialisation completed in ${stopwatch.elapsed}\n\n");
 
@@ -37,14 +35,13 @@ void main()
     print("Forward pass:\n");
     stopwatch.reset();
 
-    for(num i=0; i<(input[0].length); i+=0.0000189738919247)
+    for(int i=0; i<(input[0].length); i++)
     {
-        int x = 0;
-        //print("input: ${input[0][i]}");
-        List<double> output = forwardPass((input[0][x]), networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
-        //print("Output: ${output}");
-        List<double> outputLoss = loss(output, input[1][x], "MSE");
-        //print("Loss: ${outputLoss}");
+        print("input: ${input[0][i]}");
+        List<double> output = forwardPass((input[0][i]), networkArray, ["ReLU", "Softmax"]);
+        print("Output: ${output}");
+        double outputLoss = loss(output, input[1][i], "MSE");
+        print("Loss: ${outputLoss}");
     }
     print("Network trained 1 epoch in: ${stopwatch.elapsed}");
 
@@ -203,21 +200,35 @@ List<double> activation(List<double> layerOutput, String activationFunction)
 
 
 
-List<double> loss(List<double> output, List<double> desired, [String function = "MSE"])
+double loss(List<double> output, List<double> desired, [String function = "MSE"])
 {
-    List<double> loss = [];
 
     if(function == "MSE")
     {
+
+        List<double> losses = [];
+        double mse = 0;
+        
         for(int i=0; i<(output.length); i++)
         {
-            loss.add(pow((output[i]-desired[i]), 2).toDouble());
+            losses.add(pow((output[i]-desired[i]), 2).toDouble());
         }
+
+        for(int i=0; i<(losses.length); i++)
+        {
+            mse += losses[i];
+        }
+
+        mse = mse/(losses.length);
+        mse = sqrt(mse);
+
+        return mse;
     }
-
-
-    return loss;
-
+    
+    else
+    {
+        return 0.0;
+    }
 }
 
 
