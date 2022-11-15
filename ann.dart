@@ -37,13 +37,14 @@ void main()
     print("Forward pass:\n");
     stopwatch.reset();
 
-    for(int i=0; i<(input[0].length); i++)
+    for(num i=0; i<(input[0].length); i+=0.0000189738919247)
     {
+        int x = 0;
         //print("input: ${input[0][i]}");
-        List<double> output = forwardPass((input[0][i]), networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
-        print("Output: ${output}");
-        List<double> outputLoss = loss(output, input[1][i], "MSE");
-        print("Loss: ${outputLoss}");
+        List<double> output = forwardPass((input[0][x]), networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
+        //print("Output: ${output}");
+        List<double> outputLoss = loss(output, input[1][x], "MSE");
+        //print("Loss: ${outputLoss}");
     }
     print("Network trained 1 epoch in: ${stopwatch.elapsed}");
 
