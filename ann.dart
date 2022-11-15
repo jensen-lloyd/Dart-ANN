@@ -40,7 +40,7 @@ void main()
         print("input: ${input[0][i]}");
         List<double> output = forwardPass((input[0][i]), networkArray, ["ReLU", "Softmax"]);
         print("Output: ${output}");
-        double outputLoss = loss(output, input[1][i], "MSE");
+        double outputLoss = calculateLoss(output, input[1][i], "MSE");
         print("Loss: ${outputLoss}");
     }
     print("Network trained 1 epoch in: ${stopwatch.elapsed}");
@@ -200,7 +200,7 @@ List<double> activation(List<double> layerOutput, String activationFunction)
 
 
 
-double loss(List<double> output, List<double> desired, [String function = "MSE"])
+double calculateLoss(List<double> output, List<double> desired, [String function = "MSE"])
 {
 
     if(function == "MSE")
@@ -232,7 +232,11 @@ double loss(List<double> output, List<double> desired, [String function = "MSE"]
 }
 
 
-void backprop(List<double> loss, List<List<List<List<double>>>> networkArray)
+void backprop(loss, List<List<List<List<double>>>> networkArray, List<String> activationFunctions)
 {
-    
+    for(int i=(networkArray.length); i>1; i--)
+    {
+
+        
+    }
 }

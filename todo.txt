@@ -1,5 +1,9 @@
-- tidy up function parameter names (e.g. networkArray vs layersArray)
-
-- add other loss functions
+- create inverse activation functions 
 
 - backprop
+
+- add more loss functions
+
+- add more activation functions (sigmoid, tanH)
+
+- tidy up function parameter names (e.g. networkArray vs layersArray)
