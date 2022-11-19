@@ -4,6 +4,7 @@
 
 - add more loss functions
 
+- tidy up function parameter names (e.g. networkArray vs layersArray)
+
 - add more activation functions (sigmoid, tanH)
 
-- tidy up function parameter names (e.g. networkArray vs layersArray)
