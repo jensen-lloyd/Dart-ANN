@@ -42,8 +42,8 @@ void main()
         print("input: ${input[0][i]}");
         List<double> output = forwardPass((input[0][i]), networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
         print("Output: ${output}");
-        //double outputLoss = calculateLoss(output, input[1][i], "MSE");
-        //print("Loss: ${outputLoss}");
+        List<double> outputLoss = calculateLoss(output, input[1][i], "MSE");
+        print("Loss: ${outputLoss}");
     }
 
     print("Network trained 1 epoch in: ${stopwatch.elapsed}");
@@ -209,36 +209,29 @@ List<double> calculateLoss(List<double> output, List<double> desired, [String fu
 
     if(function == "MSE")
     {
-
+    
         List<double> losses = [];
         double sum = 0;
-        List<double> output = [];
         
-        for(int i=0; i<(output.length); i++)
+        for(int i=0; i<(output.length)-1; i++)
         {
-            losses.add((pow((output[i]-desired[i]), 2).toDouble()/2));
+            losses.add(pow((desired[i] - output[i]), 2).toDouble()/2);
         }
 
         for(int i=0; i<(losses.length); i++)
         {
            sum += losses[i]; 
         }
+        
+        losses.insert(0, sum);
 
-
-        output[0] = sum;
-
-        for(int i=0; i<(losses.length); i++)
-        {
-            output[i+1] = losses[i];
-        }
-
-        return output;
+        return losses;
     }
 
     
     else
     {
-        return [0.0];
+        return [0];
     }
 
 }
