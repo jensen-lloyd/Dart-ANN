@@ -43,7 +43,7 @@ void main()
         List<double> output = forwardPass((input[0][i]), networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
         print("Output: ${output}");
         List<double> outputLoss = calculateLoss(output, input[1][i], "MSE");
-        print("Loss: ${outputLoss}");
+        print("Loss: ${outputLoss}\n");
     }
 
     print("Network trained 1 epoch in: ${stopwatch.elapsed}");
