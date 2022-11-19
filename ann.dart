@@ -48,9 +48,7 @@ void main()
 
     print("Network trained 1 epoch in: ${stopwatch.elapsed}");
 
-
 }
-
 
 
 List<List<List<List<double>>>> generateLayers(shape)
@@ -206,35 +204,43 @@ List<double> activation(List<double> layerOutput, String activationFunction)
 
 
 
-double calculateLoss(List<double> output, List<double> desired, [String function = "MSE"])
+List<double> calculateLoss(List<double> output, List<double> desired, [String function = "MSE"])
 {
 
     if(function == "MSE")
     {
 
         List<double> losses = [];
-        double mse = 0;
+        double sum = 0;
+        List<double> output = [];
         
         for(int i=0; i<(output.length); i++)
         {
-            losses.add(pow((output[i]-desired[i]), 2).toDouble());
+            losses.add((pow((output[i]-desired[i]), 2).toDouble()/2));
         }
 
         for(int i=0; i<(losses.length); i++)
         {
-            mse += losses[i];
+           sum += losses[i]; 
         }
 
-        mse = mse/(losses.length);
-        mse = sqrt(mse)/2;
 
-        return mse;
+        output[0] = sum;
+
+        for(int i=0; i<(losses.length); i++)
+        {
+            output[i+1] = losses[i];
+        }
+
+        return output;
     }
+
     
     else
     {
-        return 0.0;
+        return [0.0];
     }
+
 }
 
 
@@ -247,7 +253,7 @@ void backprop(loss, List<List<List<List<double>>>> networkArray, List<String> ac
         for(int j=(networkArray[i].length); j>0; j--) //iterates thru neurons
         {
 
-            for(int k=(networkArray[i][j]; k>0; k--) //iterates thru weights
+            for(int k=(networkArray[i][j].length); k>0; k--) //iterates thru weights
             {
 
             }
