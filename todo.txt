@@ -1,3 +1,5 @@
+- store outputs at every layer of the network during forward pass for use later in backprop
+
 - create inverse activation functions 
 
 - backprop

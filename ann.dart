@@ -3,9 +3,9 @@ import "dart:math";
 
 double E = 2.7182818284;
 
-List<List<List<double>>> input = [[[0,0,0],[0,0,1],[0,1,0],[1,0,0],[1,1,0],[1,0,1],[0,1,1],[1,1,1]],[[0], [0], [1], [0], [1], [0], [1], [1]]];
+List<List<List<double>>> input = [[[0,0,0],[0,0,1],[0,1,0],[1,0,0],[1,1,0],[1,0,1],[0,1,1],[1,1,1]],[[0,1], [0], [1], [0], [1], [0], [1], [1]]];
 
-List<int> networkShape = [3, 5, 2];
+List<int> networkShape = [3, 2, 1];
 List<List<List<double>>> layer1ShapeExample = [ 
                                                   [ 
                                                       [1,1,1], [1,1,1], [1,1,1], [1,1,1], [1,1,1] 
@@ -213,9 +213,10 @@ List<double> calculateLoss(List<double> output, List<double> desired, [String fu
         List<double> losses = [];
         double sum = 0;
         
-        for(int i=0; i<(output.length)-1; i++)
+        for(int i=0; i<(output.length); i++)
         {
             losses.add(pow((desired[i] - output[i]), 2).toDouble()/2);
+            print(losses);
         }
 
         for(int i=0; i<(losses.length); i++)
