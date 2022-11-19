@@ -3,7 +3,7 @@ import "dart:math";
 
 double E = 2.7182818284;
 
-List<List<List<double>>> input = [[[0,0,10],[0,0,1],[0,1,0],[1,0,0],[1,1,0],[1,0,1],[0,1,1],[1,1,1]],[[0, 1], [0,1], [1,0], [0,1], [1,0], [0,1], [1,0], [1,0]]];
+List<List<List<double>>> input = [[[0,0,0],[0,0,1],[0,1,0],[1,0,0],[1,1,0],[1,0,1],[0,1,1],[1,1,1]],[[0], [0], [1], [0], [1], [0], [1], [1]]];
 
 List<int> networkShape = [3, 5, 2];
 List<List<List<double>>> layer1ShapeExample = [ 
@@ -19,7 +19,7 @@ int batchSize = 8;
 int epochs = 10;
 
 //List<int> networkShape = [5760, 3852, 3852, 3852, 12];
-List<List<double>> inputGen = List.generate(1, (i) => (List.generate(5760, (j) => (Random().nextDouble() * 10000), growable: true)));
+//List<List<double>> inputGen = List.generate(1, (i) => (List.generate(5760, (j) => (Random().nextDouble() * 10000), growable: true)));
 //List<List<List<double>>> input = [inputGen, [[1,0, 1,0, 1,0, 1,0, 1,0, 1,0]]];
 
 
@@ -35,15 +35,19 @@ void main()
     print("Forward pass:\n");
     stopwatch.reset();
 
+    print(networkArray);
+
     for(int i=0; i<(input[0].length); i++)
     {
         print("input: ${input[0][i]}");
-        List<double> output = forwardPass((input[0][i]), networkArray, ["ReLU", "Softmax"]);
+        List<double> output = forwardPass((input[0][i]), networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
         print("Output: ${output}");
-        double outputLoss = calculateLoss(output, input[1][i], "MSE");
-        print("Loss: ${outputLoss}");
+        //double outputLoss = calculateLoss(output, input[1][i], "MSE");
+        //print("Loss: ${outputLoss}");
     }
+
     print("Network trained 1 epoch in: ${stopwatch.elapsed}");
+
 
 }
 
@@ -88,10 +92,12 @@ List<double> forwardPass(List<double> inputData, List<List<List<List<double>>>> 
 
             layerOutput.add(neuronValue);
         }
-        
+
         layerInput = activation(layerOutput, activationFunction);
         outputData = activation(layerOutput, activationFunction);
+
     }
+
     return outputData;
 }
 
@@ -220,7 +226,7 @@ double calculateLoss(List<double> output, List<double> desired, [String function
         }
 
         mse = mse/(losses.length);
-        mse = sqrt(mse);
+        mse = sqrt(mse)/2;
 
         return mse;
     }
@@ -234,9 +240,18 @@ double calculateLoss(List<double> output, List<double> desired, [String function
 
 void backprop(loss, List<List<List<List<double>>>> networkArray, List<String> activationFunctions)
 {
-    for(int i=(networkArray.length); i>1; i--)
+    for(int i=(networkArray.length); i>0; i--) //iterates thru layers
     {
+        String activationFunction = activationFunctions[i];
 
-        
+        for(int j=(networkArray[i].length); j>0; j--) //iterates thru neurons
+        {
+
+            for(int k=(networkArray[i][j]; k>0; k--) //iterates thru weights
+            {
+
+            }
+
+        } 
     }
 }
