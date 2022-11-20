@@ -40,12 +40,13 @@ void main()
     for(int i=0; i<(input[0].length); i++)
     {
         print("input: ${input[0][i]}");
-        List<double> output = forwardPass((input[0][i]), networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
+        List<List<double>> outputs = forwardPass((input[0][i]), networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
+        List<double> output = outputs[(outputs.length-1)];
         print("Output: ${output}");
+        print("Outputs: ${outputs}");
         List<double> outputLoss = calculateLoss(output, input[1][i], "MSE");
         print("Loss: ${outputLoss}\n");
     }
-
     print("Network trained 1 epoch in: ${stopwatch.elapsed}");
 
 }
@@ -65,10 +66,12 @@ List<List<List<List<double>>>> generateLayers(shape)
 
 
 
-List<double> forwardPass(List<double> inputData, List<List<List<List<double>>>> layersArray, List<String> activationFunctions)
+List<List<double>> forwardPass(List<double> inputData, List<List<List<List<double>>>> layersArray, List<String> activationFunctions)
 {
     List<double> layerInput = inputData;
-    List<double> outputData = [];
+    List<double> layerOutputs = [];
+    List<List<double>> outputData = [];
+
     for(int x=0; x<(layersArray.length); x++) //iterates thru the layers
     {
         String activationFunction = activationFunctions[x];
@@ -91,8 +94,9 @@ List<double> forwardPass(List<double> inputData, List<List<List<List<double>>>> 
             layerOutput.add(neuronValue);
         }
 
-        layerInput = activation(layerOutput, activationFunction);
-        outputData = activation(layerOutput, activationFunction);
+        layerOutput = activation(layerOutput, activationFunction);
+        layerInput = layerOutput;
+        outputData.add(layerOutput);
 
     }
 
@@ -216,7 +220,6 @@ List<double> calculateLoss(List<double> output, List<double> desired, [String fu
         for(int i=0; i<(output.length); i++)
         {
             losses.add(pow((desired[i] - output[i]), 2).toDouble()/2);
-            print(losses);
         }
 
         for(int i=0; i<(losses.length); i++)
@@ -238,8 +241,9 @@ List<double> calculateLoss(List<double> output, List<double> desired, [String fu
 }
 
 
-void backprop(loss, List<List<List<List<double>>>> networkArray, List<String> activationFunctions)
+void backprop(List<List<double>> networkOutputs, List<double> loss, List<List<List<List<double>>>> networkArray, List<String> activationFunctions)
 {
+    
     for(int i=(networkArray.length); i>0; i--) //iterates thru layers
     {
         String activationFunction = activationFunctions[i];
@@ -249,7 +253,7 @@ void backprop(loss, List<List<List<List<double>>>> networkArray, List<String> ac
 
             for(int k=(networkArray[i][j].length); k>0; k--) //iterates thru weights
             {
-
+                
             }
 
         } 
