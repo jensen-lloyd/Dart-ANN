@@ -5,7 +5,7 @@ double E = 2.7182818284;
 
 List<List<List<double>>> input = [[[0,0,0],[0,0,1],[0,1,0],[1,0,0],[1,1,0],[1,0,1],[0,1,1],[1,1,1]],[[0,1], [0], [1], [0], [1], [0], [1], [1]]];
 
-List<int> networkShape = [3, 2, 1];
+List<int> networkShape = [3, 3, 2];
 List<List<List<double>>> layer1ShapeExample = [ 
                                                   [ 
                                                       [1,1,1], [1,1,1], [1,1,1], [1,1,1], [1,1,1] 
@@ -30,22 +30,21 @@ void main()
     final stopwatch = new Stopwatch()..start();
     List<List<List<List<double>>>> networkArray = generateLayers(networkShape);
     print("Paramater initialisation completed in ${stopwatch.elapsed}\n\n");
-
-    
+    print(networkArray);
     print("Forward pass:\n");
+
     stopwatch.reset();
 
-    print(networkArray);
-
-    for(int i=0; i<(input[0].length); i++)
+    for(int i=0; i<(/*input[0].length*/1); i++)
     {
         print("input: ${input[0][i]}");
-        List<List<double>> outputs = forwardPass((input[0][i]), networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
-        List<double> output = outputs[(outputs.length-1)];
+        List<double> output = forwardPass((input[0][i]), networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
         print("Output: ${output}");
-        print("Outputs: ${outputs}");
         List<double> outputLoss = calculateLoss(output, input[1][i], "MSE");
         print("Loss: ${outputLoss}\n");
+
+        backprop(output, outputLoss, networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
+
     }
     print("Network trained 1 epoch in: ${stopwatch.elapsed}");
 
@@ -66,11 +65,10 @@ List<List<List<List<double>>>> generateLayers(shape)
 
 
 
-List<List<double>> forwardPass(List<double> inputData, List<List<List<List<double>>>> layersArray, List<String> activationFunctions)
+List<double> forwardPass(List<double> inputData, List<List<List<List<double>>>> layersArray, List<String> activationFunctions)
 {
     List<double> layerInput = inputData;
-    List<double> layerOutputs = [];
-    List<List<double>> outputData = [];
+    List<double> outputData = [];
 
     for(int x=0; x<(layersArray.length); x++) //iterates thru the layers
     {
@@ -96,8 +94,7 @@ List<List<double>> forwardPass(List<double> inputData, List<List<List<List<doubl
 
         layerOutput = activation(layerOutput, activationFunction);
         layerInput = layerOutput;
-        outputData.add(layerOutput);
-
+        outputData = layerOutput;
     }
 
     return outputData;
@@ -241,19 +238,21 @@ List<double> calculateLoss(List<double> output, List<double> desired, [String fu
 }
 
 
-void backprop(List<List<double>> networkOutputs, List<double> loss, List<List<List<List<double>>>> networkArray, List<String> activationFunctions)
+void backprop(List<double> networkOutputs, List<double> loss, List<List<List<List<double>>>> networkArray, List<String> activationFunctions)
 {
-    
-    for(int i=(networkArray.length); i>0; i--) //iterates thru layers
+    print("test"); 
+    for(int i=(networkArray.length)-1; i>=0; i--) //iterates thru layers
     {
         String activationFunction = activationFunctions[i];
+        print("1");
+        print(networkArray[i]);
 
-        for(int j=(networkArray[i].length); j>0; j--) //iterates thru neurons
+        for(int j=(networkArray[i][0][0].length)-1; j>=0; j--) //iterates thru neurons in weights array
         {
 
-            for(int k=(networkArray[i][j].length); k>0; k--) //iterates thru weights
+            for(int k=(networkArray[i][0].length)-1; k>=0; k--) //iterates thru weights
             {
-                
+                print(networkArray[i][0][k][j]); 
             }
 
         } 
