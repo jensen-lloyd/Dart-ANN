@@ -15,6 +15,7 @@ List<List<List<double>>> layer1ShapeExample = [
                                                       [0], [0], [0], [0], [1]
                                                   ]
                                               ];
+double learningRate = 0.1;
 int batchSize = 8;
 int epochs = 10;
 
@@ -43,7 +44,7 @@ void main()
         List<double> outputLoss = calculateLoss(output, input[1][i], "MSE");
         print("Loss: ${outputLoss}\n");
 
-        backprop(output, outputLoss, networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"]);
+        backprop(output, input[1][i], networkArray, ["ReLU", "ReLU", "ReLU", "ReLU"], learningRate, batchSize);
 
     }
     print("Network trained 1 epoch in: ${stopwatch.elapsed}");
@@ -238,7 +239,7 @@ List<double> calculateLoss(List<double> output, List<double> desired, [String fu
 }
 
 
-void backprop(List<double> networkOutputs, List<double> loss, List<List<List<List<double>>>> networkArray, List<String> activationFunctions)
+void backprop(List<double> networkOutputs, List<double> targets, List<List<List<List<double>>>> networkArray, List<String> activationFunctions, double learningRate, int batchSize)
 {
     print("test"); 
     for(int i=(networkArray.length)-1; i>=0; i--) //iterates thru layers
@@ -253,7 +254,14 @@ void backprop(List<double> networkOutputs, List<double> loss, List<List<List<Lis
             for(int k=(networkArray[i][0].length)-1; k>=0; k--) //iterates thru weights
             {
                 print(networkArray[i][0][k][j]); 
+                double dErrordWeight = (-1*(targets[j]-networkOutputs[j])) * /*derivitave of activation function*/1 /*x output of neuron coming into this one*/;
+                print(dErrordWeight);
+                var weightAdjustment = (learningRate * dErrordWeight);
+                print(weightAdjustment);
+
+                //networkArray[i][0][k][j] += weightAdjustment; //update the weight
             }
+            //update the bias (treating it as another neuron input where the input is 1 and the weight=theBias)
 
         } 
     }
