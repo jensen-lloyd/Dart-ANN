@@ -241,23 +241,45 @@ List<double> calculateLoss(List<double> output, List<double> desired, [String fu
 
 void backprop(List<double> networkOutputs, List<double> targets, List<List<List<List<double>>>> networkArray, List<String> activationFunctions, double learningRate, int batchSize)
 {
-    print("test"); 
+    print("Backprop:");
+    print("\nNetwork Outputs: ${networkOutputs}");
+    print("\nTargets: ${targets}");
+    print("\nNetwork array: ${networkArray}");
+
+    print("\ntotal length ${networkArray.length}");
+    print("\nlength of layer 1 array (should be 2, weights and biases) ${networkArray[0].length}");
+    print("\nlength of layer 1 weights array ${networkArray[0][0].length}");
     for(int i=(networkArray.length)-1; i>=0; i--) //iterates thru layers
     {
         String activationFunction = activationFunctions[i];
         print("1");
         print(networkArray[i]);
 
-        for(int j=(networkArray[i][0][0].length)-1; j>=0; j--) //iterates thru neurons in weights array
+        for(int j=(networkArray[i][0].length)-1; j>=0; j--) //iterates thru neurons
         {
 
-            for(int k=(networkArray[i][0].length)-1; k>=0; k--) //iterates thru weights
+            for(int k=(networkArray[i][0][j].length)-1; k>=0; k--) //iterates thru weights
             {
-                print(networkArray[i][0][k][j]); 
-                double dErrordWeight = (-1*(targets[j]-networkOutputs[j])) * /*derivitave of activation function*/1 /*x output of neuron coming into this one*/;
+                print("Weight:");
+                print(networkArray[i][0][j][k]);
+
+                if(i==(networkArray.length)-1)
+                {
+                    print("Output and target: ${networkOutputs[j]}, ${targets[j]}");
+                    double dErrordWeight = (-1*(targets[j]-networkOutputs[j])) * /*derivitave of activation function*/1 /*x output of neuron coming into this one*/;
+                }
+
+                else()
+                {
+
+                }
+
+                print("\nDerivative of weight to error:");
                 print(dErrordWeight);
                 var weightAdjustment = (learningRate * dErrordWeight);
+                print("\nWeightAdjustment:");
                 print(weightAdjustment);
+                print("\n\n");
 
                 //networkArray[i][0][k][j] += weightAdjustment; //update the weight
             }
